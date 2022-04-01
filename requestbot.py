@@ -61,6 +61,7 @@ async def request_movie(message, say):
                     },
                     "value": id
                 })
+        await say("Please select a movie:")
         await say(
             blocks=blocks,
             text="Please select the movie you would like to request"
@@ -106,6 +107,7 @@ async def request_tv(message, say):
                     },
                     "value": id
                 })
+        await say("Please Select a Show:")
         await say(
             blocks=blocks,
             text="Select a TV show to request!"
