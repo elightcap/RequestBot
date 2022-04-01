@@ -8,7 +8,7 @@
 * Ombi API Key
 * MovieDB API Key
 * Slack App setup with Event Subscriptions and Interactive Components
-* Port 3001 from the internet forwarded to the device running the bot
+* Port 3001 from the internet forwarded to the device running the bot or a reverse proxy
 
 ### Installation
 
@@ -27,6 +27,8 @@ If scoped properly, bot can reply to direct messages or @mentions in channels it
 * `@requestbot requestmovie the matrix`
 * `requesttv The office`
 * `@requestbot requesttv the office`
+* `/requestmovie the matrix`
+* `/requesttv the office`
 
 ### Limitations
 
