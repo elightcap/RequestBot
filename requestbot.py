@@ -213,12 +213,12 @@ async def help_message(message, say):
 @app.action("tv_help_button")
 async def tv_help_button(ack, body, say):
     await ack()
-    help_tv(body, say)
+    await help_tv(body, say)
 
 @app.action("movie_help_button")
 async def movie_help_button(ack, body, say):
     await ack()
-    help_movie(body, say)
+    await help_movie(body, say)
 
 @app.message("help movie")
 async def help_movie(message, say):
