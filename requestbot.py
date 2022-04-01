@@ -134,7 +134,6 @@ async def app_mention(event, say):
 #for i in range(0, 4):
 @app.action(re.compile("^movie_request_button\d+$"))
 async def handle_movie_button(ack, body, say):
-    ackknowledge = requests.post
     await ack()
     movieID = body['actions'][0]['value']
     movieName = body['actions'][0]['text']['text']
@@ -145,10 +144,10 @@ async def handle_movie_button(ack, body, say):
     await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 #for i in range(0,4): f"tv_request_button{i}"
-@app.action(re.compile("^tv_request_button/[0-9]+$"))
+@app.action(re.compile("^tv_request_button\d+$"))
 async def handle_tv_button(ack, body, say):
-    #responseUrl = body['response_url']
-    #response = requests.post(responseUrl)
+    responseUrl = body['response_url']
+    response = requests.post(responseUrl)
     await ack()
     tvID = body['actions'][0]['value']
     tvName = body['actions'][0]['text']['text']
