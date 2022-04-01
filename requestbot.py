@@ -161,6 +161,16 @@ async def help_message(message, say):
     msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
     await say(f"{msg}")
 
+@app.message("help movie")
+async def help_movie(message, say):
+    msg = "To request a movie, just type `requestmovie` followed by the name of the movie you want to request! For example, `requestmovie The Matrix`. You can also just mention me in any channel and I'll try to find the movie for you, for example `@RequestBot The Matrix`"
+    await say(f"{msg}")
+
+@app.message("help tv")
+async def help_tv(message, say):
+    msg = "To request a tv show, just type `requesttv` followed by the name of the tv show you want to request! For example, `requesttv The Simpsons`. You can also just mention me in any channel and I'll try to find the tv show for you, for example `@RequestBot The Simpsons`"
+    await say(f"{msg}")
+
 @app.event("message")
 async def handle_message_events(body, logger):
     logger.info(body)
