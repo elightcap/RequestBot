@@ -181,7 +181,7 @@ async def handle_invite_command(ack, body, logger, say):
     await ack()
     text = body['text']
     inviterequest = f"<@{body['user_id']}> has requested an invite! Email: {text}"
-    blocks = [{
+    mBlocks = [{
         "type": "actions",
         "block_id": "invite_request_actions",
         "elements": [
@@ -207,6 +207,11 @@ async def handle_invite_command(ack, body, logger, say):
             }
         ]
     }]
+    await app.client.chat_postMessage(
+        channel="UERHVSNFL",
+        text=inviterequest,
+        blocks=mBlocks
+    )
 
 @app.action("invite_approve_button")
 async def handle_invite_approve_button(ack, body, say):
