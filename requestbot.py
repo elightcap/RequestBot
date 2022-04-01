@@ -242,7 +242,7 @@ def handle_invite_approve_button(ack, body, say):
     say("Approved!")
     app.client.chat_postMessage(
         channel=user,
-        text="Your request has been approved! please login to {jellyfin_url} with the following credentials: \n Username: {email} \n Password: {pw} and change your password after logging in.L"
+        text=f"Your request has been approved! please login to {jellyfin_url} with the following credentials: \n Username: {email} \n Password: {pw} and change your password after logging in."
     )
 
 @app.action("invite_deny_button")
