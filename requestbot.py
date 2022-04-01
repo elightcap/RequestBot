@@ -3,7 +3,6 @@ import urllib.parse
 from pyparsing import empty
 import requests
 import json
-import re
 
 from slack_bolt import App
 from slack_bolt.async_app import AsyncApp
