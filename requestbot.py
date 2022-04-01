@@ -131,7 +131,7 @@ async def app_mention(event, say):
         await request_tv(messageJson, say)
     elif MOVIE_COMMAND in messageText:
         await request_movie(messageJson, say)
-    elif "help" in messageText.tolower():
+    elif "help" in messageText:
         print("help")
         await help_message(messageText,say)
     
