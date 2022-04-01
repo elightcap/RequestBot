@@ -213,7 +213,7 @@ async def handle_invite_command(ack, body, logger, say):
             }
         ]
     }]
-    await app.client.chat.postMessage(
+    await app.client.chat_postMessage(
         channel="UERHVSNFL",
         text=inviterequest
     )
