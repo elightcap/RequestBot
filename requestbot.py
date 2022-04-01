@@ -254,7 +254,7 @@ def handle_invite_deny_button(ack, body, say):
     user = user.replace("<@", "").replace(">", "")
     say("Denied!")
     app.client.chat_postMessage(
-        channel="user",
+        channel=user,
         text="Sorry, your request has been denied.  Please message the admin if you have any questions."
     )
 
