@@ -158,7 +158,7 @@ for i in range(0,4):
 
 @app.message("help")
 async def help_message(message, say):
-    msg = "Hi im RquestBot, a bot to help you download movies and tv shows! For more info, try help tv or help movie!"
+    msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
     await say(f"{msg}")
 
 @app.event("message")
