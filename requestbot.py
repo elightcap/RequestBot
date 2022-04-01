@@ -156,6 +156,11 @@ for i in range(0,4):
         ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
         await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
+@app.message("help")
+async def help_message(message, say):
+    msg = "Hi im RquestBot, a bot to help you download movies and tv shows! For more info, try help tv or help movie!"
+    await say(f"{msg}")
+
 @app.event("message")
 async def handle_message_events(body, logger):
     logger.info(body)
