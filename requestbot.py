@@ -161,6 +161,8 @@ async def handle_tv_button(ack, body, say):
 
 @app.command("/requestmovie")
 async def handle_some_command(ack, body, logger, say):
+    responseUrl = body['response_url']
+    response = requests.post(responseUrl)
     await ack()
     text = body['text']
     messageJson = {"text": text}
