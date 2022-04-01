@@ -176,6 +176,44 @@ async def handle_tv_command(ack, body, logger, say):
     messageJson = {"text": text}
     await request_tv(messageJson, say)
 
+@app.command("/requestinvite")
+async def handle_invite_command(ack, body, logger, say):
+    await ack()
+    text = body['text']
+    inviterequest = f"<@{body['user_id']}> has requested an invite! Email: {text}"
+    blocks = [{
+        "type": "actions",
+        "block_id": "invite_request_actions",
+        "elements": [
+            {
+                "type": "button",
+                "action_id": "invite_approve_button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Approve",
+                    "emoji": True
+                },
+                "value": "approve"
+            },
+            {
+                "type": "button",
+                "action_id": "invite_deny_button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Deny",
+                    "emoji": True
+                },
+                "value": "deny"
+            }
+        ]
+    }]
+
+@app.action("invite_approve_button")
+async def handle_invite_approve_button(ack, body, say):
+    print(body)
+    await ack()
+    await say("Approved!")
+
 
 @app.message(re.compile("(^help$)"))
 async def help_message(message, say):
