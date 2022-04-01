@@ -159,6 +159,12 @@ async def handle_tv_button(ack, body, say):
     ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
     await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
+@app.command("/requestmovie")
+async def handle_some_command(ack, body, logger):
+    await ack()
+    print(body)
+
+
 @app.message(re.compile("(^help$)"))
 async def help_message(message, say):
     msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
