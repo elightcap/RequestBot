@@ -133,7 +133,6 @@ async def app_mention(event, say):
         await request_movie(messageJson, say)
     
 
-#for i in range(0, 4):
 @app.action(re.compile("^movie_request_button\d+$"))
 async def handle_movie_button(ack, body, say):
     responseURL = body['response_url']
@@ -147,7 +146,6 @@ async def handle_movie_button(ack, body, say):
     ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
     await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
-#for i in range(0,4): f"tv_request_button{i}"
 @app.action(re.compile("^tv_request_button\d+$"))
 async def handle_tv_button(ack, body, say):
     responseUrl = body['response_url']
@@ -178,18 +176,63 @@ async def handle_tv_command(ack, body, logger, say):
 
 @app.message(re.compile("(^help$)"))
 async def help_message(message, say):
-    msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
+    msg = "Hi im RequestBot, a bot to help you download movies and tv shows! Please choose an option below!"
+
+    blocks = [
+        {
+            "type": "actions",
+            "block_id": "tv_request_actions",
+            "elements": [
+                {
+                    "type": "button",
+                    "action_id": "tv_help_button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "TV Help",
+                        "emoji": True
+                    },
+                    "value": "tv_help_button"
+                },
+                {
+                    "type": "button",
+                    "action_id": "movie_help_button",
+                    "text": {
+                        "type": "plain_text",
+                        "text": "Movie Help",
+                        "emoji": True
+                    },
+                    "value": "movie_help_button"
+                }
+            ]
+        }]
     await say(f"{msg}")
+    await say(
+        blocks=blocks, text="Select an option!"
+        )
+
+@app.action("tv_help_button")
+async def tv_help_button(ack, body, say):
+    await ack()
+    help_tv(body, say)
+
+@app.action("movie_help_button")
+async def movie_help_button(ack, body, say):
+    await ack()
+    help_movie(body, say)
 
 @app.message("help movie")
 async def help_movie(message, say):
-    msg = "To request a movie, just type `requestmovie` followed by the name of the movie you want to request! For example, `requestmovie The Matrix`. You can also just mention me in any channel and I'll try to find the movie for you, for example `@RequestBot The Matrix`"
-    await say(f"{msg}")
+    msg1 = "To request a movie, just type `requestmovie` followed by the name of the movie you want to request! For example, `requestmovie The Matrix`. You can also just mention me in any channel and I'll try to find the movie for you, for example `@RequestBot The Matrix`"
+    msg2 = "Slash commands are also supported, for example `/requestmovie The Matrix`"
+    await say(f"{msg1}")
+    await say(f"{msg2}")
 
 @app.message("help tv")
 async def help_tv(message, say):
-    msg = "To request a tv show, just type `requesttv` followed by the name of the tv show you want to request! For example, `requesttv The Simpsons`. You can also just mention me in any channel and I'll try to find the tv show for you, for example `@RequestBot The Simpsons`"
-    await say(f"{msg}")
+    msg1 = "To request a tv show, just type `requesttv` followed by the name of the tv show you want to request! For example, `requesttv The Simpsons`. You can also just mention me in any channel and I'll try to find the tv show for you, for example `@RequestBot The Simpsons`"
+    msg2 = "Slash commands are also supported, for example `/requesttv The Simpsons`"
+    await say(f"{msg1}")
+    await say(f"{msg2}")
 
 @app.event("message")
 async def handle_message_events(body, logger):
