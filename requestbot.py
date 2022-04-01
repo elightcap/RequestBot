@@ -1,5 +1,6 @@
 import os
 import urllib.parse
+from pyparsing import empty
 import requests
 import json
 import re
@@ -24,14 +25,12 @@ ombi_headers = {"ApiKey": ombi_api_key, "Content-Type": "application/json"}
 ombi_movie_url = "https://ombi.elightcap.com/api/v1/Request/movie"
 ombi_tv_url = "https://ombi.elightcap.com/api/v2/Requests/tv"
 bot_id = None
-print(os.getenv('SLACK_BOT_TOKEN'))
 
 MOVIE_COMMAND = "requestmovie"
 TV_COMMAND = "requesttv"
 
 @app.message(MOVIE_COMMAND)
 async def request_movie(message, say):
-    print(message)
     messageText = ((message['text']).replace(MOVIE_COMMAND, "")).strip()
     movieUrlEncode = urllib.parse.quote(messageText)
     dbReqURL = movie_url + movieUrlEncode
@@ -39,36 +38,41 @@ async def request_movie(message, say):
     dbReqJson = json.loads(dbReq.text)
     if(len(dbReqJson['results']) > 1):
         count = len(dbReqJson['results'])
+        if count < 4:
+            count = count
+        else:
+            count = 4
         blocks = [{
             "type": "actions",
             "block_id": "movie_request_actions",
             "elements": []
         }]
-        for i in range(count):
+        for i in range(0,count):
             id = str(dbReqJson['results'][i]['id']).strip()
-            blocks[0]['elements'].append({
-                "type": "button",
-                "action_id": "movie_request_button"+str(i),
-                "text": {
-                    "type": "plain_text",
-                    "text": dbReqJson['results'][i]['title'],
-                    "emoji": True
-                },
-                "value": id
-            })
-        print(blocks)
+            if(len(dbReqJson['results'][i]['title']) < 76):
+                blocks[0]['elements'].append({
+                    "type": "button",
+                    "action_id": "movie_request_button"+str(i),
+                    "text": {
+                        "type": "plain_text",
+                        "text": dbReqJson['results'][i]['title'],
+                        "emoji": True
+                    },
+                    "value": id
+                })
         await say(
             blocks=blocks,
+            text="Please select the movie you would like to request"
         )
         return
-    movieID = (dbReqJson['results'][0]['id'])
-    print(movieID)
-    movieName = dbReqJson['results'][0]['title']
-    ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
-    ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-    ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
-    await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
+    else:
+        movieID = (dbReqJson['results'][0]['id'])
+        movieName = dbReqJson['results'][0]['title']
+        ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
+        ombiJson = json.dumps(ombiBody)
+        ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
+        ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
+        await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 @app.message(TV_COMMAND)
 async def request_tv(message, say):
@@ -77,38 +81,84 @@ async def request_tv(message, say):
     dbReqURL = tv_url + tvUrlEncode
     dbReq = requests.get(dbReqURL, headers=moviedb_headers)
     dbReqJson = json.loads(dbReq.text)
-    tvID = (dbReqJson['results'][0]['id'])
-    tvName = dbReqJson['results'][0]['name']
-    ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
-    ombiJson = json.dumps(ombiBody)
-    print(ombiBody)
-    ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-    print(ombiReq.text)
-    ombiTVLink = "https://ombi.elightcap.com/details/tv/" + str(tvID)
-    await say(f"Requesting <{ombiTVLink}|{tvName}>!")
+    if(len(dbReqJson['results']) > 1):
+        count = len(dbReqJson['results'])
+        if count < 4:
+            count = count
+        else:
+            count = 4
+        blocks = [{
+            "type": "actions",
+            "block_id": "tv_request_actions",
+            "elements": []
+        }]
+        for i in range(count):
+            id = str(dbReqJson['results'][i]['id']).strip()
+            if(len(dbReqJson['results'][i]['name']) < 76):
+                blocks[0]['elements'].append({
+                    "type":"button",
+                    "action_id": "tv_request_button"+str(i),
+                    "text": {
+                        "type": "plain_text",
+                        "text": dbReqJson['results'][i]['name'],
+                        "emoji": True
+                    },
+                    "value": id
+                })
+        await say(
+            blocks=blocks,
+            text="Select a TV show to request!"
+        )
+        return
+    else:
+        tvID = (dbReqJson['results'][0]['id'])
+        tvName = dbReqJson['results'][0]['name']
+        ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
+        ombiJson = json.dumps(ombiBody)
+        ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
+        ombiTVLink = "https://ombi.elightcap.com/details/tv/" + str(tvID)
+        await say(f"Requesting <{ombiTVLink}|{tvName}>!")
 
 @app.event("app_mention")
 async def app_mention(event, say):
     messageText = event['text']
     messageText = (messageText.replace("<@U039Y3P5SQH>", "")).strip()
     messageJson = {"text": messageText}
-    print(messageJson)
     if TV_COMMAND in messageText:
         await request_tv(messageJson, say)
     elif MOVIE_COMMAND in messageText:
         await request_movie(messageJson, say)
+    
 
-@app.block_action("movie_request_button0")
-async def handle_action(ack, body, logger, say):
-    await ack()
-    print(body)
-    movieID = body['actions'][0]['value']
-    movieName = body['actions'][0]['text']['text']
-    ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
-    ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-    ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
-    await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
+for i in range(0, 4):
+    @app.action(f"movie_request_button{i}")
+
+    async def handle_movie_button(ack, body, say):
+        await ack()
+        movieID = body['actions'][0]['value']
+        movieName = body['actions'][0]['text']['text']
+        ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
+        ombiJson = json.dumps(ombiBody)
+        ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
+        ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
+        await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
+
+for i in range(0,4):
+    @app.action(f"tv_request_button{i}")
+
+    async def handle_tv_button(ack, body, say):
+        await ack()
+        tvID = body['actions'][0]['value']
+        tvName = body['actions'][0]['text']['text']
+        ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
+        ombiJson = json.dumps(ombiBody)
+        ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
+        ombiMovieLink = "https://ombi.elightcap.com/details/tv/" + str(tvID)
+        await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
+
+@app.event("message")
+async def handle_message_events(body, logger):
+    logger.info(body)
 
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
