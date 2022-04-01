@@ -241,7 +241,7 @@ def handle_invite_approve_button(ack, body, say):
     jfinReq = requests.post(jfin_url, data=jfinJson, headers=jellyfin_headers)
     say("Approved!")
     app.client.chat_postMessage(
-        channel="user",
+        channel=user,
         text="Your request has been approved! please login to {jellyfin_url} with the following credentials: \n Username: {email} \n Password: {pw} and change your password after logging in.L"
     )
 
