@@ -94,12 +94,12 @@ async def app_mention(event, say):
     messageJson = {"text": messageText}
     print(messageJson)
     if TV_COMMAND in messageText:
-        await request_tv(event, say)
+        await request_tv(messageJson, say)
     elif MOVIE_COMMAND in messageText:
         await request_movie(messageJson, say)
+list = [*range(1, 10)]
 
-
-@app.action("movie_request_button{_}")
+@app.action("button")
 async def handle_action(ack, body, logger, say):
     await ack()
     print(body)
