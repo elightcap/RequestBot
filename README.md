@@ -8,6 +8,7 @@
 * Ombi API Key
 * MovieDB API Key
 * Slack App setup with Event Subscriptions and Interactive Components
+* Port 3001 from the internet forwarded to the device running the bot
 
 ###Installation
 * Create a Slack app https://api.slack.com/start
