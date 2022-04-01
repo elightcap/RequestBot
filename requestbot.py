@@ -22,8 +22,9 @@ movie_url = "https://api.themoviedb.org/4/search/movie?query="
 tv_url = "https://api.themoviedb.org/4/search/tv?query="
 ombi_api_key = os.getenv('OMBI_API_KEY')
 ombi_headers = {"ApiKey": ombi_api_key, "Content-Type": "application/json"}
-ombi_movie_url = "https://ombi.elightcap.com/api/v1/Request/movie"
-ombi_tv_url = "https://ombi.elightcap.com/api/v2/Requests/tv"
+ombi_base_url = os.getenv('OMBI_BASE_URL')
+ombi_movie_url = ombi_base_url + "/api/v1/Request/movie"
+ombi_tv_url = ombi_base_url + "/api/v2/Requests/tv"
 bot_id = None
 
 MOVIE_COMMAND = "requestmovie"
@@ -71,7 +72,7 @@ async def request_movie(message, say):
         ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
         ombiJson = json.dumps(ombiBody)
         ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-        ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
+        ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
         await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 @app.message(TV_COMMAND)
@@ -116,7 +117,7 @@ async def request_tv(message, say):
         ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
         ombiJson = json.dumps(ombiBody)
         ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-        ombiTVLink = "https://ombi.elightcap.com/details/tv/" + str(tvID)
+        ombiTVLink = ombi_base_url + "/details/tv/" + str(tvID)
         await say(f"Requesting <{ombiTVLink}|{tvName}>!")
 
 @app.event("app_mention")
@@ -140,7 +141,7 @@ for i in range(0, 4):
         ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
         ombiJson = json.dumps(ombiBody)
         ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-        ombiMovieLink = "https://ombi.elightcap.com/details/movie/" + str(movieID)
+        ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
         await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 for i in range(0,4):
@@ -153,7 +154,7 @@ for i in range(0,4):
         ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
         ombiJson = json.dumps(ombiBody)
         ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-        ombiMovieLink = "https://ombi.elightcap.com/details/tv/" + str(tvID)
+        ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
         await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
 @app.event("message")
