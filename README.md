@@ -31,7 +31,7 @@ If scoped properly, bot can reply to direct messages or @mentions in channels it
 ### Limitations
 
 * Currently, I limit what is returned to a total of 4 items.  This is because i am bad at this, and the way I've done things is slow.  If the item you are searching for is missing, try being more specific, ie 'The Matrix Resurrections' instead of just 'The Matrix'.
-* Because im bad at this, whenever you click a button, slack will think the request errored out.  Slack requires a response within 3 seconds and my stuff is too slow.  Its not intrusive and doesnt really matter
+* ~~ Because im bad at this, whenever you click a button, slack will think the request errored out.  Slack requires a response within 3 seconds and my stuff is too slow.  Its not intrusive and doesnt really matter. ~~ This should be fixed now.
 * This will likely break.  I didnt test a lot.  If it breaks put an issue in, or make a Pull request.
 
 ### ToDo

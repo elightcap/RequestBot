@@ -134,6 +134,8 @@ async def app_mention(event, say):
 #for i in range(0, 4):
 @app.action(re.compile("^movie_request_button\d+$"))
 async def handle_movie_button(ack, body, say):
+    responseURL = body['response_url']
+    response = requests.post(responseURL)
     await ack()
     movieID = body['actions'][0]['value']
     movieName = body['actions'][0]['text']['text']
