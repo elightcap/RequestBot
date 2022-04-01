@@ -31,7 +31,7 @@ ombi_tv_url = ombi_base_url + "/api/v2/Requests/tv"
 jellyfin_api_key = os.getenv('JELLYFIN_API_KEY')
 jellyfin_url = os.getenv('JELLYFIN_URL')
 jellyfin_headers = {"X-Emby-Authorization": "Mediabrowser Token=" + jellyfin_api_key, "Content-Type": "application/json"}
-admin_id = os.getenv('ADMIN_ID')
+admin_id = os.getenv('SLACK_ADMIN_ID')
 bot_id = None
 
 MOVIE_COMMAND = "requestmovie"
