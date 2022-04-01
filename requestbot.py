@@ -144,18 +144,17 @@ for i in range(0, 4):
         ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
         await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
-for i in range(0,4):
-    @app.action(f"tv_request_button{i}")
-
-    async def handle_tv_button(ack, body, say):
-        await ack()
-        tvID = body['actions'][0]['value']
-        tvName = body['actions'][0]['text']['text']
-        ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
-        ombiJson = json.dumps(ombiBody)
-        ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-        ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
-        await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
+#for i in range(0,4): f"tv_request_button{i}"
+@app.action(re.compile("^tv_request_button"))
+async def handle_tv_button(ack, body, say):
+    await ack()
+    tvID = body['actions'][0]['value']
+    tvName = body['actions'][0]['text']['text']
+    ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
+    ombiJson = json.dumps(ombiBody)
+    ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
+    ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
+    await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
 @app.message(re.compile("(^help$)"))
 async def help_message(message, say):
