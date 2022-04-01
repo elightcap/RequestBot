@@ -147,8 +147,8 @@ async def handle_movie_button(ack, body, say):
 #for i in range(0,4): f"tv_request_button{i}"
 @app.action(re.compile("^tv_request_button/[0-9]+$"))
 async def handle_tv_button(ack, body, say):
-    responseUrl = body['response_url']
-    response = requests.post(responseUrl)
+    #responseUrl = body['response_url']
+    #response = requests.post(responseUrl)
     await ack()
     tvID = body['actions'][0]['value']
     tvName = body['actions'][0]['text']['text']
