@@ -132,7 +132,8 @@ async def app_mention(event, say):
     elif MOVIE_COMMAND in messageText:
         await request_movie(messageJson, say)
     elif "help" in messageText.tolower():
-        await help_message(empty,say)
+        print("help")
+        await help_message(messageText,say)
     
 
 @app.action(re.compile("^movie_request_button\d+$"))
