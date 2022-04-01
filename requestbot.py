@@ -1,7 +1,5 @@
-from email import message
 import os
 import urllib.parse
-from pyparsing import empty
 import requests
 import json
 import re
@@ -9,7 +7,6 @@ import random
 import string
 
 from slack_bolt import App
-from slack_bolt.async_app import AsyncApp
 from dotenv import load_dotenv
 
 
@@ -37,7 +34,7 @@ bot_id = None
 MOVIE_COMMAND = "requestmovie"
 TV_COMMAND = "requesttv"
 
-@app.message(MOVIE_COMMAND)
+@app.message(re.compile(MOVIE_COMMAND, re.IGNORECASE))
 def request_movie(message, say):
     messageText = ((message['text']).replace(MOVIE_COMMAND, "")).strip()
     movieUrlEncode = urllib.parse.quote(messageText)
@@ -84,7 +81,7 @@ def request_movie(message, say):
         ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
         say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
-@app.message(TV_COMMAND)
+@app.message(re.compile(TV_COMMAND, re.IGNORECASE))
 def request_tv(message, say):
     messageText = ((message['text']).replace(TV_COMMAND, "")).strip()
     tvUrlEncode = urllib.parse.quote(messageText)
@@ -260,7 +257,7 @@ def handle_invite_deny_button(ack, body, say):
     )
 
 
-@app.message(re.compile("(^help$)"))
+@app.message(re.compile("(^help$)", re.IGNORECASE))
 def help_message(message, say):
     msg = "Hi im RequestBot, a bot to help you download movies and tv shows! Please choose an option below!"
 
