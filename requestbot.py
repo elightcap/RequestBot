@@ -157,7 +157,7 @@ for i in range(0,4):
         ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
         await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
-@app.message(re.match("(^help$)"))
+@app.message(re.compile("(^help$)"))
 async def help_message(message, say):
     msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
     await say(f"{msg}")
