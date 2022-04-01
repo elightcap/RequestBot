@@ -3,6 +3,7 @@ import urllib.parse
 from pyparsing import empty
 import requests
 import json
+import re
 
 from slack_bolt import App
 from slack_bolt.async_app import AsyncApp
@@ -156,7 +157,7 @@ for i in range(0,4):
         ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
         await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
-@app.message("help")
+@app.message(re.match("(^help$)"))
 async def help_message(message, say):
     msg = "Hi im RequestBot, a bot to help you download movies and tv shows! For more info, try `help tv` or `help movie`!"
     await say(f"{msg}")
