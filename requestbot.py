@@ -162,11 +162,18 @@ async def handle_tv_button(ack, body, say):
     await say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
 @app.command("/requestmovie")
-async def handle_some_command(ack, body, logger, say):
+async def handle_movie_command(ack, body, logger, say):
     await ack()
     text = body['text']
     messageJson = {"text": text}
     await request_movie(messageJson, say)
+
+@app.command("/requesttv")
+async def handle_tv_command(ack, body, logger, say):
+    await ack()
+    text = body['text']
+    messageJson = {"text": text}
+    await request_tv(messageJson, say)
 
 
 @app.message(re.compile("(^help$)"))

@@ -38,4 +38,4 @@ If scoped properly, bot can reply to direct messages or @mentions in channels it
 
 * Optimization
 * More commands (mostly around getting the current queue)
-* Maybe make a slash command?
+* ~~Maybe make a slash command?~~ This is added
