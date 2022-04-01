@@ -4,6 +4,8 @@ from pyparsing import empty
 import requests
 import json
 import re
+import random
+import string
 
 from slack_bolt import App
 from slack_bolt.async_app import AsyncApp
@@ -25,6 +27,9 @@ ombi_headers = {"ApiKey": ombi_api_key, "Content-Type": "application/json"}
 ombi_base_url = os.getenv('OMBI_BASE_URL')
 ombi_movie_url = ombi_base_url + "/api/v1/Request/movie"
 ombi_tv_url = ombi_base_url + "/api/v2/Requests/tv"
+jellyfin_api_key = os.getenv('JELLYFIN_API_KEY')
+jellyfin_url = os.getenv('JELLYFIN_URL')
+jellyfin_headers = {"X-Emby-Authorization": "Mediabrowser Token=" + jellyfin_api_key, "Content-Type": "application/json"}
 bot_id = None
 
 MOVIE_COMMAND = "requestmovie"
@@ -66,6 +71,7 @@ async def request_movie(message, say):
             blocks=blocks,
             text="Please select the movie you would like to request"
         )
+
         return
     else:
         movieID = (dbReqJson['results'][0]['id'])
@@ -207,6 +213,11 @@ async def handle_invite_command(ack, body, logger, say):
             }
         ]
     }]
+    await app.client.chat.postMessage(
+        channel="UERHVSNFL",
+        text=inviterequest
+    )
+
     await app.client.chat_postMessage(
         channel="UERHVSNFL",
         text=inviterequest,
@@ -215,8 +226,18 @@ async def handle_invite_command(ack, body, logger, say):
 
 @app.action("invite_approve_button")
 async def handle_invite_approve_button(ack, body, say):
-    print(body)
     await ack()
+    email = body['actions'][0]['value']
+    msg= body['message']['text']
+    split = msg.split(" ")
+    user = split[0]
+    user = user.replace("<@", "").replace(">", "")
+    N=12
+    pw = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
+    jfinBody = {"Name": email, "Password": pw}
+    jfinJson = json.dumps(jfinBody)
+    jfin_url = jellyfin_url + "/Users/New"
+    jfinReq = requests.post(jfin_url, data=jfinJson, headers=jellyfin_headers)
     await say("Approved!")
 
 
