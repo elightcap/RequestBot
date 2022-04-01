@@ -193,7 +193,7 @@ async def handle_invite_command(ack, body, logger, say):
                     "text": "Approve",
                     "emoji": True
                 },
-                "value": "approve"
+                "value": text
             },
             {
                 "type": "button",
