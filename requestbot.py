@@ -145,7 +145,7 @@ for i in range(0, 4):
         await say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 #for i in range(0,4): f"tv_request_button{i}"
-@app.action(re.compile("^tv_request_button"))
+@app.action(re.compile("^tv_request_button/[0-9]+$"))
 async def handle_tv_button(ack, body, say):
     await ack()
     tvID = body['actions'][0]['value']
