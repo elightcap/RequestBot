@@ -31,6 +31,7 @@ ombi_tv_url = ombi_base_url + "/api/v2/Requests/tv"
 jellyfin_api_key = os.getenv('JELLYFIN_API_KEY')
 jellyfin_url = os.getenv('JELLYFIN_URL')
 jellyfin_headers = {"X-Emby-Authorization": "Mediabrowser Token=" + jellyfin_api_key, "Content-Type": "application/json"}
+admin_id = os.getenv('ADMIN_ID')
 bot_id = None
 
 MOVIE_COMMAND = "requestmovie"
@@ -215,12 +216,12 @@ def handle_invite_command(ack, body, logger, say):
         ]
     }]
     app.client.chat_postMessage(
-        channel="UERHVSNFL",
+        channel=admin_id,
         text=inviterequest
     )
 
     app.client.chat_postMessage(
-        channel="UERHVSNFL",
+        channel=admin_id,
         text=inviterequest,
         blocks=mBlocks
     )
