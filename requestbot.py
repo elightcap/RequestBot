@@ -1,3 +1,4 @@
+from email import message
 import os
 import urllib.parse
 from pyparsing import empty
@@ -239,6 +240,23 @@ def handle_invite_approve_button(ack, body, say):
     jfin_url = jellyfin_url + "/Users/New"
     jfinReq = requests.post(jfin_url, data=jfinJson, headers=jellyfin_headers)
     say("Approved!")
+    app.client.chat_postMessage(
+        channel="user",
+        text="Your request has been approved! please login to {jellyfin_url} with the following credentials: \n Username: {email} \n Password: {pw} and change your password after logging in.L"
+    )
+
+@app.action("invite_deny_button")
+def handle_invite_deny_button(ack, body, say):
+    ack()
+    msg= body['message']['text']
+    split = msg.split(" ")
+    user = split[0]
+    user = user.replace("<@", "").replace(">", "")
+    say("Denied!")
+    app.client.chat_postMessage(
+        channel="user",
+        text="Sorry, your request has been denied.  Please message the admin if you have any questions."
+    )
 
 
 @app.message(re.compile("(^help$)"))
