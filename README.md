@@ -5,15 +5,18 @@
 ### Requirements
 
 * Python3
-* Ombi API Key
-* MovieDB API Key
+* [Slack](https://slack.com/)
+* [Ombi](https://ombi.io)
+* [Ombi API](https://ombi.io/api)
+* [MovieDB API Key](https://www.themoviedb.org/settings/api)
 * Slack App setup with Event Subscriptions and Interactive Components
 * Port 3001 from the internet forwarded to the device running the bot or a reverse proxy
-* (Optional) Jellyfin
+* (Optional) [Jellyfin](https://jellyfin.org)
+* (Optional) [Jellyfin API Key](https://jellyfin.org/docs/api/authentication)
 
 ### Installation
 
-* Create a Slack app https://api.slack.com/start
+* [Create a Slack app](https://api.slack.com/start)
 * Clone this repository `git clone https://github.com/elightcap/RequestBot.git`
 * copy the env example `cp env.sample .env`
 * Change values in .env `nano .env`
@@ -24,13 +27,14 @@
 
 If scoped properly, bot can reply to direct messages or @mentions in channels it has been added to
 
-* `requestmovie the matrix`
-* `@requestbot requestmovie the matrix`
-* `requesttv The office`
-* `@requestbot requesttv the office`
-* `/requestmovie the matrix`
-* `/requesttv the office`
-* `/requestinvite youremail@example.com`
+* `/help` - Displays help message
+* `requestmovie the matrix` - Requests a movie when direcly chatting with the bot
+* `@requestbot requestmovie the matrix` - Requests a movie when @mentioned
+* `requesttv The office` - Requests a TV show when direcly chatting with the bot
+* `@requestbot requesttv the office` - Requests a TV show when @mentioned
+* `/requestmovie the matrix` - Requests a movie when typing `/requestmovie` in a channel the bot is added to
+* `/requesttv the office` - Requests a TV show when typing `/requesttv` in a channel the bot is added to
+* `/requestinvite youremail@example.com` - Requests an invite to Jellyfin
 ### Limitations
 
 * Currently, I limit what is returned to a total of 4 items.  This is because i am bad at this, and the way I've done things is slow.  If the item you are searching for is missing, try being more specific, ie 'The Matrix Resurrections' instead of just 'The Matrix'.
@@ -40,6 +44,8 @@ If scoped properly, bot can reply to direct messages or @mentions in channels it
 
 ### ToDo
 
+* Add support for Plex (not sure this is possible)
 * Optimization
 * More commands (mostly around getting the current queue)
 * ~~Maybe make a slash command?~~ This is added
+* Think about forking to discord.  Its pretty much a full rewrite, but it would be nice to have a discord bot that can do the same things.
