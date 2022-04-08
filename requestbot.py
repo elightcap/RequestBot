@@ -169,9 +169,10 @@ def app_mention(event, say):
 
 @app.action(re.compile("^movie_request_button\d+$"))
 def handle_movie_button(ack, body, say):
-    responseURL = body['response_url']
-    response = requests.post(responseURL)
+    responseUrl = body['response_url']
     ack()
+    body = {"delete_original": "true"}
+    delReq = requests.post(responseUrl, data=body, headers="'Content-Type': 'application/json'")
     movieID = body['actions'][0]['value']
     movieName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
@@ -183,8 +184,9 @@ def handle_movie_button(ack, body, say):
 @app.action(re.compile("^tv_request_button\d+$"))
 def handle_tv_button(ack, body, say):
     responseUrl = body['response_url']
-    response = requests.post(responseUrl)
     ack()
+    body = {"delete_original": "true"}
+    delReq = requests.post(responseUrl, data=body, headers="'Content-Type': 'application/json'")
     tvID = body['actions'][0]['value']
     tvName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
