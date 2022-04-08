@@ -234,6 +234,10 @@ def handle_invite_command(ack, body, logger, say):
         text=inviterequest,
         blocks=mBlocks
     )
+@app.command("/help")
+def handle_help_command(ack, body, logger, say):
+    ack()
+    help_message(body,say)
 
 @app.action("invite_approve_button")
 def handle_invite_approve_button(ack, body, say):
