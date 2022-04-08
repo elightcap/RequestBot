@@ -78,7 +78,6 @@ def request_movie(message, say):
                 blocks=blocks,
                 text="Please select the movie you would like to request"
             )
-
         return
     else:
         movieID = (dbReqJson['results'][0]['id'])
@@ -126,11 +125,18 @@ def request_tv(message, say):
                     },
                     "value": id
                 })
-        say("Please Select a Show:")
-        say(
-            blocks=blocks,
-            text="Select a TV show to request!"
-        )
+        if(message["channel_name"] == "directmessage"):
+            app.client.chat_postMessage(
+                channel=message["user_id"],
+                blocks=blocks,
+                text="Please select a TV show to request"
+            )
+        else:     
+            say("Please Select a Show:")
+            say(
+                blocks=blocks,
+                text="Select a TV show to request!"
+            )
         return
     else:
         tvID = (dbReqJson['results'][0]['id'])
@@ -139,7 +145,13 @@ def request_tv(message, say):
         ombiJson = json.dumps(ombiBody)
         ombiReq = requests.post(OMBI_TV_URL, data=ombiJson, headers=OMBI_HEADERS)
         ombiTVLink = OMBI_BASE_URL + "/details/tv/" + str(tvID)
-        say(f"Requesting <{ombiTVLink}|{tvName}>!")
+        if(message["channel_name"] == "directmessage"):
+            app.client.chat_postMessage(
+                channel=message["user_id"],
+                text=f"Requesting <{ombiTVLink}|{tvName}>!"
+            )
+        else:
+            say(f"Requesting <{ombiTVLink}|{tvName}>!")
 
 @app.event("app_mention")
 def app_mention(event, say):
