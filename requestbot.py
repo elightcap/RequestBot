@@ -201,9 +201,7 @@ def handle_movie_command(ack, body, logger, say):
 @app.command("/requesttv")
 def handle_tv_command(ack, body, logger, say):
     ack()
-    text = body['text']
-    messageJson = {"text": text}
-    request_tv(messageJson, say)
+    request_tv(body, say)
 
 @app.command("/requestinvite")
 def handle_invite_command(ack, body, logger, say):
