@@ -180,13 +180,14 @@ def handle_movie_button(ack, body, say):
     ombiReq = requests.post(OMBI_MOVIE_URL, data=ombiJson, headers=OMBI_HEADERS)
     ombiMovieLink = OMBI_BASE_URL + "/details/movie/" + str(movieID)
     say(f"Requesting <{ombiMovieLink}|{movieName}>!")
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
 
 @app.action(re.compile("^tv_request_button\d+$"))
 def handle_tv_button(ack, body, say):
     responseUrl = body['response_url']
     ack()
-    body = {"delete_original": "true"}
-    delReq = requests.post(responseUrl, data=body, headers="'Content-Type': 'application/json'")
     tvID = body['actions'][0]['value']
     tvName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
@@ -194,6 +195,9 @@ def handle_tv_button(ack, body, say):
     ombiReq = requests.post(OMBI_TV_URL, data=ombiJson, headers=OMBI_HEADERS)
     ombiMovieLink = OMBI_BASE_URL + "/details/tv/" + str(tvID)
     say(f"Requesting <{ombiMovieLink}|{tvName}>!")
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
 
 @app.command("/requestmovie")
 def handle_movie_command(ack, body, logger, say):
@@ -255,9 +259,6 @@ def handle_help_command(ack, body, logger, say):
 def handle_invite_approve_button(ack, body, say):
     ack()
     responseUrl=body['response_url']
-    body = {"delete_original": "true"}
-    bodyJson = json.dumps(body)
-    delReq = requests.post(responseUrl, data=bodyJson)
     email = body['actions'][0]['value']
     msg= body['message']['text']
     split = msg.split(" ")
@@ -274,6 +275,9 @@ def handle_invite_approve_button(ack, body, say):
         channel=user,
         text=f"Your request has been approved! please login to {JELLYFIN_URL} with the following credentials: \n Username: {email} \n Password: {pw} \n Please change your password after logging in."
     )
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
 
 @app.action("invite_deny_button")
 def handle_invite_deny_button(ack, body, say):
