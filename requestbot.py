@@ -274,10 +274,12 @@ def handle_invite_approve_button(ack, body, say):
 @app.action("invite_deny_button")
 def handle_invite_deny_button(ack, body, say):
     responseUrl=body['response_url']
-    delReq=requests.post(responseUrl, data={"delete_original": "true"}, headers="'Content-Type': 'application/json'")
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
     print(delReq)
     ack()
-    msg= body['message']['text']
+    msg = body['message']['text']
     split = msg.split(" ")
     user = split[0]
     user = user.replace("<@", "").replace(">", "")
