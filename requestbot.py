@@ -10,25 +10,26 @@ from slack_bolt import App
 from dotenv import load_dotenv
 
 
+
 load_dotenv()
 app = App(
     token = os.getenv('SLACK_BOT_TOKEN'),
     signing_secret = os.getenv('SLACK_SIGNING_SECRET')
 )
 
-moviedb_api_key = os.getenv('MOVIEDB_API_KEY')
-moviedb_headers = {'Authorization': f'Bearer {moviedb_api_key}'}
-movie_url = "https://api.themoviedb.org/4/search/movie?query="
-tv_url = "https://api.themoviedb.org/4/search/tv?query="
-ombi_api_key = os.getenv('OMBI_API_KEY')
-ombi_headers = {"ApiKey": ombi_api_key, "Content-Type": "application/json"}
-ombi_base_url = os.getenv('OMBI_BASE_URL')
-ombi_movie_url = ombi_base_url + "/api/v1/Request/movie"
-ombi_tv_url = ombi_base_url + "/api/v2/Requests/tv"
-jellyfin_api_key = os.getenv('JELLYFIN_API_KEY')
-jellyfin_url = os.getenv('JELLYFIN_URL')
-jellyfin_headers = {"X-Emby-Authorization": "Mediabrowser Token=" + jellyfin_api_key, "Content-Type": "application/json"}
-admin_id = os.getenv('SLACK_ADMIN_ID')
+MOVIEDB_API_KEY = os.getenv('MOVIEDB_API_KEY')
+MOVIEDB_HEADERS = {'Authorization': f'Bearer {MOVIEDB_API_KEY}'}
+MOVIE_URL = "https://api.themoviedb.org/4/search/movie?query="
+TV_URL = "https://api.themoviedb.org/4/search/tv?query="
+OMBI_API_KEY = os.getenv('OMBI_API_KEY')
+OMBI_HEADERS = {"ApiKey": OMBI_API_KEY, "Content-Type": "application/json"}
+OMBI_BASE_URL = os.getenv('OMBI_BASE_URL')
+OMBI_MOVIE_URL = OMBI_BASE_URL + "/api/v1/Request/movie"
+OMBI_TV_URL = OMBI_BASE_URL + "/api/v2/Requests/tv"
+JELLYFIN_API_KEY = os.getenv('JELLYFIN_API_KEY')
+JELLYFIN_URL = os.getenv('JELLYFIN_URL')
+JELLYFIN_HEADERS = {"X-Emby-Authorization": "Mediabrowser Token=" + JELLYFIN_API_KEY, "Content-Type": "application/json"}
+ADMIN_ID = os.getenv('SLACK_ADMIN_ID')
 bot_id = None
 
 MOVIE_COMMAND = "requestmovie"
@@ -38,8 +39,8 @@ TV_COMMAND = "requesttv"
 def request_movie(message, say):
     messageText = ((message['text']).replace(MOVIE_COMMAND, "")).strip()
     movieUrlEncode = urllib.parse.quote(messageText)
-    dbReqURL = movie_url + movieUrlEncode
-    dbReq = requests.get(dbReqURL, headers=moviedb_headers)
+    dbReqURL = MOVIE_URL + movieUrlEncode
+    dbReq = requests.get(dbReqURL, headers=MOVIEDB_HEADERS)
     dbReqJson = json.loads(dbReq.text)
     if(len(dbReqJson['results']) > 1):
         count = len(dbReqJson['results'])
@@ -65,11 +66,18 @@ def request_movie(message, say):
                     },
                     "value": id
                 })
-        say("Please select a movie:")
-        say(
-            blocks=blocks,
-            text="Please select the movie you would like to request"
-        )
+        if(message["channel_name"] == "directmessage"):
+            app.client.chat_postMessage(
+                channel=message["user_id"],
+                blocks=blocks,
+                text="Please select a movie to request"
+            )
+        else:
+            say("Please select a movie:")
+            say(
+                blocks=blocks,
+                text="Please select the movie you would like to request"
+            )
 
         return
     else:
@@ -77,16 +85,22 @@ def request_movie(message, say):
         movieName = dbReqJson['results'][0]['title']
         ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
         ombiJson = json.dumps(ombiBody)
-        ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-        ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
-        say(f"Requesting <{ombiMovieLink}|{movieName}>!")
+        ombiReq = requests.post(OMBI_MOVIE_URL, data=ombiJson, headers=OMBI_HEADERS)
+        ombiMovieLink = OMBI_BASE_URL + "/details/movie/" + str(movieID)
+        if(message["channel_name"] == "directmessage"):
+            app.client.chat_postMessage(
+                channel=message["user_id"],
+                text=f"Requesting <{ombiMovieLink}|{movieName}>!"
+            )
+        else:
+            say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 @app.message(re.compile(TV_COMMAND, re.IGNORECASE))
 def request_tv(message, say):
     messageText = ((message['text']).replace(TV_COMMAND, "")).strip()
     tvUrlEncode = urllib.parse.quote(messageText)
-    dbReqURL = tv_url + tvUrlEncode
-    dbReq = requests.get(dbReqURL, headers=moviedb_headers)
+    dbReqURL = TV_URL + tvUrlEncode
+    dbReq = requests.get(dbReqURL, headers=MOVIEDB_HEADERS)
     dbReqJson = json.loads(dbReq.text)
     if(len(dbReqJson['results']) > 1):
         count = len(dbReqJson['results'])
@@ -123,8 +137,8 @@ def request_tv(message, say):
         tvName = dbReqJson['results'][0]['name']
         ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
         ombiJson = json.dumps(ombiBody)
-        ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-        ombiTVLink = ombi_base_url + "/details/tv/" + str(tvID)
+        ombiReq = requests.post(OMBI_TV_URL, data=ombiJson, headers=OMBI_HEADERS)
+        ombiTVLink = OMBI_BASE_URL + "/details/tv/" + str(tvID)
         say(f"Requesting <{ombiTVLink}|{tvName}>!")
 
 @app.event("app_mention")
@@ -150,8 +164,8 @@ def handle_movie_button(ack, body, say):
     movieName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
     ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(ombi_movie_url, data=ombiJson, headers=ombi_headers)
-    ombiMovieLink = ombi_base_url + "/details/movie/" + str(movieID)
+    ombiReq = requests.post(OMBI_MOVIE_URL, data=ombiJson, headers=OMBI_HEADERS)
+    ombiMovieLink = OMBI_BASE_URL + "/details/movie/" + str(movieID)
     say(f"Requesting <{ombiMovieLink}|{movieName}>!")
 
 @app.action(re.compile("^tv_request_button\d+$"))
@@ -163,16 +177,14 @@ def handle_tv_button(ack, body, say):
     tvName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
     ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(ombi_tv_url, data=ombiJson, headers=ombi_headers)
-    ombiMovieLink = ombi_base_url + "/details/tv/" + str(tvID)
+    ombiReq = requests.post(OMBI_TV_URL, data=ombiJson, headers=OMBI_HEADERS)
+    ombiMovieLink = OMBI_BASE_URL + "/details/tv/" + str(tvID)
     say(f"Requesting <{ombiMovieLink}|{tvName}>!")
 
 @app.command("/requestmovie")
 def handle_movie_command(ack, body, logger, say):
     ack()
-    text = body['text']
-    messageJson = {"text": text}
-    request_movie(messageJson, say)
+    request_movie(body, say)
 
 @app.command("/requesttv")
 def handle_tv_command(ack, body, logger, say):
@@ -213,12 +225,12 @@ def handle_invite_command(ack, body, logger, say):
         ]
     }]
     app.client.chat_postMessage(
-        channel=admin_id,
+        channel=ADMIN_ID,
         text=inviterequest
     )
 
     app.client.chat_postMessage(
-        channel=admin_id,
+        channel=ADMIN_ID,
         text=inviterequest,
         blocks=mBlocks
     )
@@ -235,12 +247,12 @@ def handle_invite_approve_button(ack, body, say):
     pw = ''.join(random.choices(string.ascii_uppercase + string.digits, k=N))
     jfinBody = {"Name": email, "Password": pw}
     jfinJson = json.dumps(jfinBody)
-    jfin_url = jellyfin_url + "/Users/New"
-    jfinReq = requests.post(jfin_url, data=jfinJson, headers=jellyfin_headers)
+    jfin_url = JELLYFIN_URL + "/Users/New"
+    jfinReq = requests.post(jfin_url, data=jfinJson, headers=JELLYFIN_HEADERS)
     say("Approved!")
     app.client.chat_postMessage(
         channel=user,
-        text=f"Your request has been approved! please login to {jellyfin_url} with the following credentials: \n Username: {email} \n Password: {pw} \n Please change your password after logging in."
+        text=f"Your request has been approved! please login to {JELLYFIN_URL} with the following credentials: \n Username: {email} \n Password: {pw} \n Please change your password after logging in."
     )
 
 @app.action("invite_deny_button")
