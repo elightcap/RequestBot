@@ -279,9 +279,6 @@ def handle_invite_approve_button(ack, body, say):
 def handle_invite_deny_button(ack, body, say):
     ack()
     responseUrl=body['response_url']
-    body = {"delete_original": "true"}
-    bodyJson = json.dumps(body)
-    delReq = requests.post(responseUrl, data=bodyJson)
     msg = body['message']['text']
     split = msg.split(" ")
     user = split[0]
@@ -291,6 +288,9 @@ def handle_invite_deny_button(ack, body, say):
         channel=user,
         text="Sorry, your request has been denied.  Please message the admin if you have any questions."
     )
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
 
 
 @app.message(re.compile("(^help$)", re.IGNORECASE))
