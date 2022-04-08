@@ -171,8 +171,6 @@ def app_mention(event, say):
 def handle_movie_button(ack, body, say):
     responseUrl = body['response_url']
     ack()
-    body = {"delete_original": "true"}
-    delReq = requests.post(responseUrl, data=body, headers="'Content-Type': 'application/json'")
     movieID = body['actions'][0]['value']
     movieName = body['actions'][0]['text']['text']
     ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
