@@ -254,6 +254,10 @@ def handle_help_command(ack, body, logger, say):
 @app.action("invite_approve_button")
 def handle_invite_approve_button(ack, body, say):
     ack()
+    responseUrl=body['response_url']
+    body = {"delete_original": "true"}
+    bodyJson = json.dumps(body)
+    delReq = requests.post(responseUrl, data=bodyJson)
     email = body['actions'][0]['value']
     msg= body['message']['text']
     split = msg.split(" ")
@@ -273,12 +277,11 @@ def handle_invite_approve_button(ack, body, say):
 
 @app.action("invite_deny_button")
 def handle_invite_deny_button(ack, body, say):
+    ack()
     responseUrl=body['response_url']
     body = {"delete_original": "true"}
     bodyJson = json.dumps(body)
     delReq = requests.post(responseUrl, data=bodyJson)
-    print(delReq)
-    ack()
     msg = body['message']['text']
     split = msg.split(" ")
     user = split[0]
