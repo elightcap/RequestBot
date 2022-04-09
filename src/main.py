@@ -2,7 +2,7 @@ import os
 import re
 
 from helper import helperfunc,helper_button_actions
-from tv import tv_req
+from tv import tv_req,tv_button_actions
 
 from slack_bolt import App
 from dotenv import load_dotenv
@@ -30,11 +30,7 @@ def tvreq(ack,body,logger):
 
 @app.action(re.compile("^tv_request_button\d+$"))
 def handle_tv_request_button(ack, body, logger):
-    ack()
-    app.client.chat_postMessage(
-        channel=body['user']['id'],
-        text="You selected: " + body['actions'][0]['value']
-    )
+    tv_button_actions(ack,body)
 
 
 if __name__ == "__main__":
