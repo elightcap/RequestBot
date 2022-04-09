@@ -20,7 +20,7 @@ def help(ack,body,logger):
 
 @app.action(re.compile("helper_button$"))
 def handle_helper_button(ack, body, logger):
-    helper_button_actions(body)
+    helper_button_actions(ack,body)
     
 
 
