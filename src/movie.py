@@ -1,7 +1,8 @@
 import os
-import requests
 import json
 import urllib.parse
+from urllib.error import HTTPError
+import requests
 
 from dotenv import load_dotenv
 from slack_bolt import App
@@ -21,33 +22,35 @@ OMBI_BASE_URL = os.getenv('OMBI_BASE_URL')
 OMBI_MOVIE_URL = OMBI_BASE_URL + "/api/v1/Request/movie"
 
 def movie_req(ack,body):
+    """movie request function.  If more than one result, have user select correct.
+    If only one result, request movie."""
     ack()
     print(body)
     try:
         text = body['text']
-        movieUrlEncode = urllib.parse.quote(text)
-        dbReqUrl = MOVIE_URL + movieUrlEncode
-        dbReq = requests.get(dbReqUrl, headers=MOVIE_DB_HEADERS)
-        dbReqJson = json.loads(dbReq.text)
-        if(len(dbReqJson['results']) > 1):
-            count = len(dbReqJson['results'])
+        movie_url_encode = urllib.parse.quote(text)
+        db_req_url = MOVIE_URL + movie_url_encode
+        db_req = requests.get(db_req_url, headers=MOVIE_DB_HEADERS)
+        db_req_json = json.loads(db_req.text)
+        if len(db_req_json['results']) > 1:
+            count = len(db_req_json['results'])
             blocks = [{
                 "type": "actions",
                 "block_id": "movie_request_actions",
                 "elements": []
             }]
             for i in range(count):
-                id = str(dbReqJson['results'][i]['id']).strip()
-                if(len(dbReqJson['results'][i]['title']) < 76):
+                i_id = str(db_req_json['results'][i]['id']).strip()
+                if len(db_req_json['results'][i]['title']) < 76:
                     blocks[0]['elements'].append({
                         "type":"button",
                         "action_id": "movie_request_button"+str(i),
                         "text": {
                             "type": "plain_text",
-                            "text": dbReqJson['results'][i]['title'],
+                            "text": db_req_json['results'][i]['title'],
                             "emoji": True
                         },
-                        "value": id
+                        "value": i_id
                     })
             app.client.chat_postMessage(
                 channel=body['user_id'],
@@ -59,8 +62,8 @@ def movie_req(ack,body):
                 text="Select a Movie to request!"
             )
             return
-    except KeyError as e:
-        print(e)
+    except KeyError as error:
+        print(error)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a movie title!"
@@ -68,18 +71,31 @@ def movie_req(ack,body):
         return
 
 def movie_button_actions(ack,body):
+    """movie button actions function.  Sends movie request to Ombi based on button value."""
     ack()
-    responseUrl = body['response_url']
-    movieID = body['actions'][0]['value']
-    movieName = body['actions'][0]['text']['text']
-    ombiBody = {"theMovieDbId": movieID, "languageCode": "EN", "is4kRequest": False}
-    ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombiJson)
-    ombiMovieLink = OMBI_BASE_URL + "/details/movie/" + str(movieID)
+    response_url = body['response_url']
+    movie_id = body['actions'][0]['value']
+    movie_name = body['actions'][0]['text']['text']
+    ombi_body = {"theMovieDbId": movie_id, "languageCode": "EN", "is4kRequest": False}
+    ombi_json = json.dumps(ombi_body)
+    try:
+        requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_json)
+    except HTTPError as err:
+        print(err)
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="There was an error with your request.  Please try again."
+        )
+        return
+    ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
     app.client.chat_postMessage(
         channel=body['user']['id'],
-        text=f"Requesting <{ombiMovieLink}|{movieName}>!"
+        text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
     )
-    delBody = {"delete_original": "true"}
-    bodyJson = json.dumps(delBody)
-    delReq = requests.post(responseUrl, data=bodyJson)
+    del_body = {"delete_original": "true"}
+    body_json = json.dumps(del_body)
+    try:
+        requests.post(response_url, data=body_json)
+    except HTTPError as err:
+        print(err)
+        return

@@ -1,7 +1,8 @@
 import os
-import requests
 import json
 import urllib.parse
+from urllib.error import HTTPError
+import requests
 
 from dotenv import load_dotenv
 from slack_bolt import App
@@ -21,32 +22,34 @@ OMBI_BASE_URL = os.getenv('OMBI_BASE_URL')
 OMBI_TV_URL = OMBI_BASE_URL + "/api/v2/Requests/tv"
 
 def tv_req(ack,body):
+    """tv request function.  If more than one result, have user select correct.
+    If only one result, request show."""
     ack()
     try:
         text = body['text']
-        tvUrlEncode = urllib.parse.quote(text)
-        dbReqUrl = TV_URL + tvUrlEncode
-        dbReq = requests.get(dbReqUrl, headers=MOVIE_DB_HEADERS)
-        dbReqJson = json.loads(dbReq.text)
-        if(len(dbReqJson['results']) > 1):
-            count = len(dbReqJson['results'])
+        tv_url_encode = urllib.parse.quote(text)
+        db_req_url = TV_URL + tv_url_encode
+        db_req = requests.get(db_req_url, headers=MOVIE_DB_HEADERS)
+        db_req_json = json.loads(db_req.text)
+        if len(db_req_json['results']) > 1:
+            count = len(db_req_json['results'])
             blocks = [{
                 "type": "actions",
                 "block_id": "tv_request_actions",
                 "elements": []
             }]
             for i in range(count):
-                id = str(dbReqJson['results'][i]['id']).strip()
-                if(len(dbReqJson['results'][i]['name']) < 76):
+                i_id = str(db_req_json['results'][i]['id']).strip()
+                if len(db_req_json['results'][i]['name']) < 76:
                     blocks[0]['elements'].append({
                         "type":"button",
                         "action_id": "tv_request_button"+str(i),
                         "text": {
                             "type": "plain_text",
-                            "text": dbReqJson['results'][i]['name'],
+                            "text": db_req_json['results'][i]['name'],
                             "emoji": True
                         },
-                        "value": id
+                        "value": i_id
                     })
             app.client.chat_postMessage(
                 channel=body['user_id'],
@@ -58,8 +61,8 @@ def tv_req(ack,body):
                 text="Select a TV show to request!"
             )
             return
-    except KeyError as e:
-        print(e)
+    except KeyError as error:
+        print(error)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a tv show name with your request"
@@ -67,18 +70,27 @@ def tv_req(ack,body):
         return
 
 def tv_button_actions(ack,body):
+    """tv button actions function.  request show based on button value"""
     ack()
-    responseUrl = body['response_url']
-    tvID = body['actions'][0]['value']
-    tvName = body['actions'][0]['text']['text']
-    ombiBody = {"theMovieDbId": tvID, "requestAll": True, "latestSeason": True, "firstSeason": True}
-    ombiJson = json.dumps(ombiBody)
-    ombiReq = requests.post(OMBI_TV_URL, data=ombiJson, headers=OMBI_HEADERS)
-    ombiMovieLink = OMBI_BASE_URL + "/details/tv/" + str(tvID)
+    response_url = body['response_url']
+    tv_id = body['actions'][0]['value']
+    tv_name = body['actions'][0]['text']['text']
+    ombi_body = {
+        "theMovieDbId": tv_id, "requestAll": True, "latestSeason": True, "firstSeason": True
+        }
+    ombi_json = json.dumps(ombi_body)
+    try:
+        requests.post(OMBI_TV_URL, data=ombi_json, headers=OMBI_HEADERS)
+    except HTTPError as err:
+        print(err)
+    ombi_movie_link = OMBI_BASE_URL + "/details/tv/" + str(tv_id)
     app.client.chat_postMessage(
         channel=body['user']['id'],
-        text=f"Requesting <{ombiMovieLink}|{tvName}>!"
+        text=f"Requesting <{ombi_movie_link}|{tv_name}>!"
         )
-    delBody = {"delete_original": "true"}
-    bodyJson = json.dumps(delBody)
-    delReq = requests.post(responseUrl, data=bodyJson)
+    del_body = {"delete_original": "true"}
+    body_json = json.dumps(del_body)
+    try:
+        requests.post(response_url, data=body_json)
+    except HTTPError as err:
+        print(err)
