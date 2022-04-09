@@ -59,17 +59,17 @@ def helper_button_actions(ack,body):
     if body["actions"][0]["value"] == "tv_helper":
         app.client.chat_postMessage(
             channel=body['user']['id'],
-            text="Tv Helper"
+            text="To request a TV show, try the requesttv slash command! For example `/requesttv The Flash`."
         )
     elif body["actions"][0]["value"] == "movie_helper":
         app.client.chat_postMessage(
             channel=body['user']['id'],
-            text="Movie Helper"
+            text="To request a movie, try the requestmovie slash command! For example `/requestmovie The Godfather`. "
         )
     elif body["actions"][0]["value"] == "invite_helper":
         app.client.chat_postMessage(
             channel=body['user']['id'],
-            text="Invite Helper"
+            text="To request an invite to the Jellyfin server, try the requestinvite slash command! For example `/requestinvite test@example.com`. Your request will be sent to the Jellyfin server admin for approval. You will recieve a message containing username and password if your request is approved."
         )
 
 
