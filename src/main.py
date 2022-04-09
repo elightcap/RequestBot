@@ -1,7 +1,7 @@
 import os
 import re
 
-from helper import helperfunc
+from helper import helperfunc,helper_button_actions
 
 from slack_bolt import App
 from dotenv import load_dotenv
@@ -19,9 +19,9 @@ def help(ack,body,logger):
     helperfunc(ack,body)
 
 @app.action(re.compile("helper_button$"))
-def handle_some_action(ack, body, logger):
-    ack()
-    print(body)
+def handle_helper_button(ack, body, logger):
+    helper_button_actions(body)
+    
 
 
 if __name__ == "__main__":

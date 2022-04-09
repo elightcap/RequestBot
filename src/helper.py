@@ -54,3 +54,22 @@ def helperfunc(ack,body):
         text="Choose a helper"
     )
 
+def helper_button_actions(ack,body):
+    ack()
+    if body["actions"][0]["value"] == "tv_helper":
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="Tv Helper"
+        )
+    elif body["actions"][0]["value"] == "movie_helper":
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="Movie Helper"
+        )
+    elif body["actions"][0]["value"] == "invite_helper":
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="Invite Helper"
+        )
+
+
