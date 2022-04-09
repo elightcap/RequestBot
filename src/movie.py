@@ -50,11 +50,11 @@ def movie_req(ack,body):
                         "value": id
                     })
             app.client.chat_postMessage(
-                channel=body['user']['id'],
+                channel=body['user_id'],
                 text="Please Select a Movie:"
                 )
             app.client.chat_postMessage(
-                channel=body['user']['id'],
+                channel=body['user_id'],
                 blocks=blocks,
                 text="Select a Movie to request!"
             )
