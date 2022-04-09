@@ -32,7 +32,7 @@ def tvreq(ack,body,logger):
 def handle_tv_request_button(ack, body, logger):
     ack()
     app.client.chat_postMessage(
-        channel=body['user_id'],
+        channel=body['user']['id'],
         text="You selected: " + body['actions'][0]['value']
     )
 
