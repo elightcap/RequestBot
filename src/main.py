@@ -42,5 +42,10 @@ def handle_movie_request_button(ack, body, logger):
     movie_button_actions(ack,body)
 
 
+
+@app.event("message")
+def handle_message_events(body, logger):
+    return
+
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
