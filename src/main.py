@@ -16,6 +16,11 @@ app = App(
 def help(ack,body,logger):
     helperfunc(ack,body)
 
+@app.action("tv_helper_button")
+def handle_some_action(ack, body, logger):
+    ack()
+    print(body)
+
 
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
