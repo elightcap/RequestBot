@@ -1,4 +1,4 @@
-import os
+import os 
 import re
 
 from helper import helperfunc,helper_button_actions
@@ -15,48 +15,57 @@ app = App(
     token = os.getenv('SLACK_BOT_TOKEN'),
     signing_secret = os.getenv('SLACK_SIGNING_SECRET')
 )
-#CHAT = app.client.chat_postMessage()
 
 @app.command("/help")
-def help(ack,body,logger):
+def req_help(ack,body):
+    """listener for help function"""
     helperfunc(ack,body)
 
 @app.action(re.compile("helper_button$"))
-def handle_helper_button(ack, body, logger):
+def handle_helper_button(ack, body):
+    """listener for helper button"""
     helper_button_actions(ack,body)
 
 
 @app.command("/requesttv")
-def tvreq(ack,body,logger):
+def tvreq(ack,body):
+    """listener for tv request function"""
     tv_req(ack,body)
 
-@app.action(re.compile("^tv_request_button\d+$"))
-def handle_tv_request_button(ack, body, logger):
+@app.action(re.compile(r"^tv_request_button\d+$"))
+def handle_tv_request_button(ack, body):
+    """listener for tv request button"""
     tv_button_actions(ack,body)
 
 @app.command("/requestmovie")
-def moviereq(ack,body,logger):
+def moviereq(ack,body):
+    """listener for movie request function"""
     movie_req(ack,body)
 
-@app.action(re.compile("^movie_request_button\d+$"))
-def handle_movie_request_button(ack, body, logger):
+@app.action(re.compile(r"^movie_request_button\d+$"))
+def handle_movie_request_button(ack, body):
+    """listener for movie request button"""
     movie_button_actions(ack,body)
 
 @app.command("/requestinvite")
-def invitereq(ack,body,logger):
+def invitereq(ack,body):
+    """listener for invite request function"""
     invite_req(ack,body)
 
 @app.action("invite_approve_button")
-def handle_invite_approve_button(ack, body, logger):
+def handle_invite_approve_button(ack, body):
+    """listener for invite approve button"""
     invite_approve_actions(ack,body)
 
 @app.action("invite_deny_button")
-def handle_invite_deny_button(ack, body, logger):
+def handle_invite_deny_button(ack, body):
+    """listener for invite deny button"""
     invite_deny_actions(ack,body)
 
 
 @app.event("message")
-def handle_message_events(body, logger):
+def handle_message_events():
+    """listener for message events"""
     return
 
 if __name__ == "__main__":
