@@ -4,6 +4,7 @@ import re
 from helper import helperfunc,helper_button_actions
 from tv import tv_req,tv_button_actions
 from movie import movie_req,movie_button_actions
+from invite import invite_req,invite_approve_actions,invite_deny_actions
 
 from slack_bolt import App
 from dotenv import load_dotenv
@@ -41,6 +42,17 @@ def moviereq(ack,body,logger):
 def handle_movie_request_button(ack, body, logger):
     movie_button_actions(ack,body)
 
+@app.command("/requestinvite")
+def invitereq(ack,body,logger):
+    invite_req(ack,body)
+
+@app.action("invite_approve_button")
+def handle_invite_approve_button(ack, body, logger):
+    invite_approve_actions(ack,body)
+
+@app.action("invite_deny_button")
+def handle_invite_deny_button(ack, body, logger):
+    invite_deny_actions(ack,body)
 
 
 @app.event("message")
