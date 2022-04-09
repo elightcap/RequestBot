@@ -28,6 +28,14 @@ def handle_helper_button(ack, body, logger):
 def tvreq(ack,body,logger):
     tv_req(ack,body)
 
+@app.action(re.compile("^tv_request_button\d+$"))
+def handle_tv_request_button(ack, body, logger):
+    ack()
+    app.client.chat_postMessage(
+        channel=body['user_id'],
+        text="You selected: " + body['actions'][0]['value']
+    )
+
 
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
