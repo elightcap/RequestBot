@@ -24,6 +24,36 @@ def tv_req(ack,body):
         dbReq = requests.get(dbReqUrl, headers=MOVIE_DB_HEADERS)
         dbReqJson = json.loads(dbReq.text)
         print(dbReqJson)
+        if(len(dbReqJson['results']) > 1):
+            count = len(dbReqJson['results'])
+            blocks = [{
+                "type": "actions",
+                "block_id": "tv_request_actions",
+                "elements": []
+            }]
+            for i in range(count):
+                id = str(dbReqJson['results'][i]['id']).strip()
+                if(len(dbReqJson['results'][i]['name']) < 76):
+                    blocks[0]['elements'].append({
+                        "type":"button",
+                        "action_id": "tv_request_button"+str(i),
+                        "text": {
+                            "type": "plain_text",
+                            "text": dbReqJson['results'][i]['name'],
+                            "emoji": True
+                        },
+                        "value": id
+                    })
+            app.client.chat_postMessage(
+                channel=body['user_id'],
+                text="Please Select a Show:"
+                )
+            app.client.chat_postMessage(
+                channel=body['user_id'],
+                blocks=blocks,
+                text="Select a TV show to request!"
+            )
+            return
     except KeyError as e:
         app.client.chat_postMessage(
             channel=body['user_id'],
