@@ -60,6 +60,7 @@ def movie_req(ack,body):
             )
             return
     except KeyError as e:
+        print(e)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a movie title!"
