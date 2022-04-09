@@ -59,6 +59,7 @@ def tv_req(ack,body):
             )
             return
     except KeyError as e:
+        print(e)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a tv show name with your request"
