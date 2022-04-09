@@ -1,4 +1,6 @@
 import os
+import re
+
 from helper import helperfunc
 
 from slack_bolt import App
@@ -16,7 +18,7 @@ app = App(
 def help(ack,body,logger):
     helperfunc(ack,body)
 
-@app.action("tv_helper_button")
+@app.action(re.compile("helper_button$"))
 def handle_some_action(ack, body, logger):
     ack()
     print(body)
