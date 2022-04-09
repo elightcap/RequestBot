@@ -10,7 +10,7 @@ app = App(
 )
 
 
-def helperfunc(ack,body, say):
+def helperfunc(ack,body):
     ack()
     mBlocks=[{
         "type": "actions",
