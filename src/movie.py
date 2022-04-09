@@ -22,6 +22,7 @@ OMBI_MOVIE_URL = OMBI_BASE_URL + "/api/v1/Request/movie"
 
 def movie_req(ack,body):
     ack()
+    print(body)
     try:
         text = body['text']
         movieUrlEncode = urllib.parse.quote(text)
@@ -81,5 +82,3 @@ def movie_button_actions(ack,body):
     delBody = {"delete_original": "true"}
     bodyJson = json.dumps(delBody)
     delReq = requests.post(responseUrl, data=bodyJson)
-
-
