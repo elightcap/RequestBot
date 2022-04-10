@@ -26,7 +26,6 @@ def movie_req(ack,body):
     """movie request function.  If more than one result, have user select correct.
     If only one result, request movie."""
     ack()
-    print(body)
     try:
         text = body['text']
         movie_url_encode = urllib.parse.quote(text)
@@ -63,8 +62,8 @@ def movie_req(ack,body):
                 text="Select a Movie to request!"
             )
             return
-    except KeyError as error:
-        print(error)
+    except KeyError as err:
+        print(err)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a movie title!"
