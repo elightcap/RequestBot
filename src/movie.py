@@ -95,6 +95,11 @@ def movie_button_actions(ack,body):
             )
         else:
             requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_json)
+            ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
+            app.client.chat_postMessage(
+            channel=body['user']['id'],
+            text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
+    )
     except HTTPError as err:
         print(err)
         app.client.chat_postMessage(
@@ -102,11 +107,6 @@ def movie_button_actions(ack,body):
             text="There was an error with your request.  Please try again."
         )
         return
-    ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
-    app.client.chat_postMessage(
-        channel=body['user']['id'],
-        text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
-    )
     del_body = {"delete_original": "true"}
     body_json = json.dumps(del_body)
     try:
