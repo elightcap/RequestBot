@@ -85,12 +85,12 @@ def movie_button_actions(ack,body):
         get_json = json.loads(get_req.text)
         if get_json['approved'] is True and get_json['available'] is True:
             app.client.chat_postMessage(
-                channel=body['user_id'],
+                channel=body['user']['id'],
                 text=f"{movie_name} is already available!"
             )
         elif get_json['approved'] is True and get_json['available'] is False:
             app.client.chat_postMessage(
-                channel=body['user_id'],
+                channel=body['user']['id'],
                 text=f"{movie_name} is already requested!"
             )
         else:
@@ -98,7 +98,7 @@ def movie_button_actions(ack,body):
     except HTTPError as err:
         print(err)
         app.client.chat_postMessage(
-            channel=body['user_id'],
+            channel=body['user']['id'],
             text="There was an error with your request.  Please try again."
         )
         return
