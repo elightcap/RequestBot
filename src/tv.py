@@ -20,6 +20,7 @@ OMBI_API_KEY = os.getenv('OMBI_API_KEY')
 OMBI_HEADERS = {"ApiKey": OMBI_API_KEY, "Content-Type": "application/json"}
 OMBI_BASE_URL = os.getenv('OMBI_BASE_URL')
 OMBI_TV_URL = OMBI_BASE_URL + "/api/v2/Requests/tv"
+OMBI_SEARCH_URL = OMBI_BASE_URL + "/api/v2/Search/tv"
 
 def tv_req(ack,body):
     """tv request function.  If more than one result, have user select correct.
@@ -61,8 +62,8 @@ def tv_req(ack,body):
                 text="Select a TV show to request!"
             )
             return
-    except KeyError as error:
-        print(error)
+    except KeyError as err:
+        print(err)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a tv show name with your request"
@@ -80,14 +81,28 @@ def tv_button_actions(ack,body):
         }
     ombi_json = json.dumps(ombi_body)
     try:
-        requests.post(OMBI_TV_URL, data=ombi_json, headers=OMBI_HEADERS)
+        get_url = OMBI_SEARCH_URL + f"/{tv_id}"
+        get_req = requests.get(get_url, headers=OMBI_HEADERS)
+        get_json = json.loads(get_req.text)
+        if get_json['approved'] is True and get_json['available'] is True:
+            app.client.chat_postMessage(
+                channel=body['user']['id'],
+                text=f"{tv_name} is already available!"
+            )
+        elif get_json['approved'] is True and get_json['available'] is False:
+            app.client.chat_postMessage(
+                channel=body['user']['id'],
+                text=f"{tv_name} is already requested!"
+            )
+        else:
+            requests.post(OMBI_TV_URL, data=ombi_json, headers=OMBI_HEADERS)
+            ombi_movie_link = OMBI_BASE_URL + "/details/tv/" + str(tv_id)
+            app.client.chat_postMessage(
+            channel=body['user']['id'],
+            text=f"Requesting <{ombi_movie_link}|{tv_name}>!"
+            )
     except HTTPError as err:
         print(err)
-    ombi_movie_link = OMBI_BASE_URL + "/details/tv/" + str(tv_id)
-    app.client.chat_postMessage(
-        channel=body['user']['id'],
-        text=f"Requesting <{ombi_movie_link}|{tv_name}>!"
-        )
     del_body = {"delete_original": "true"}
     body_json = json.dumps(del_body)
     try:

@@ -20,12 +20,12 @@ OMBI_API_KEY = os.getenv('OMBI_API_KEY')
 OMBI_HEADERS = {"ApiKey": OMBI_API_KEY, "Content-Type": "application/json"}
 OMBI_BASE_URL = os.getenv('OMBI_BASE_URL')
 OMBI_MOVIE_URL = OMBI_BASE_URL + "/api/v1/Request/movie"
+OMBI_SEARCH_URL = OMBI_BASE_URL + "/api/v2/Search/movie"
 
 def movie_req(ack,body):
     """movie request function.  If more than one result, have user select correct.
     If only one result, request movie."""
     ack()
-    print(body)
     try:
         text = body['text']
         movie_url_encode = urllib.parse.quote(text)
@@ -62,8 +62,8 @@ def movie_req(ack,body):
                 text="Select a Movie to request!"
             )
             return
-    except KeyError as error:
-        print(error)
+    except KeyError as err:
+        print(err)
         app.client.chat_postMessage(
             channel=body['user_id'],
             text="Please enter a movie title!"
@@ -79,19 +79,33 @@ def movie_button_actions(ack,body):
     ombi_body = {"theMovieDbId": movie_id, "languageCode": "EN", "is4kRequest": False}
     ombi_json = json.dumps(ombi_body)
     try:
-        requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_json)
+        get_url = OMBI_SEARCH_URL + f"/{movie_id}"
+        get_req = requests.get(get_url, headers=OMBI_HEADERS)
+        get_json = json.loads(get_req.text)
+        if get_json['approved'] is True and get_json['available'] is True:
+            app.client.chat_postMessage(
+                channel=body['user']['id'],
+                text=f"{movie_name} is already available!"
+            )
+        elif get_json['approved'] is True and get_json['available'] is False:
+            app.client.chat_postMessage(
+                channel=body['user']['id'],
+                text=f"{movie_name} is already requested!"
+            )
+        else:
+            requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_json)
+            ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
+            app.client.chat_postMessage(
+            channel=body['user']['id'],
+            text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
+    )
     except HTTPError as err:
         print(err)
         app.client.chat_postMessage(
-            channel=body['user_id'],
+            channel=body['user']['id'],
             text="There was an error with your request.  Please try again."
         )
         return
-    ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
-    app.client.chat_postMessage(
-        channel=body['user']['id'],
-        text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
-    )
     del_body = {"delete_original": "true"}
     body_json = json.dumps(del_body)
     try:
