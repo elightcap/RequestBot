@@ -1,10 +1,11 @@
-import os 
+import os
 import re
 
-from helper import helperfunc,helper_button_actions
-from tv import tv_req,tv_button_actions
-from movie import movie_req,movie_button_actions
-from invite import invite_req,invite_approve_actions,invite_deny_actions
+from src.helper import helperfunc,helper_button_actions
+from src.tv import tv_req,tv_button_actions
+from src.movie import movie_req,movie_button_actions
+from src.invite import invite_req,invite_approve_actions,invite_deny_actions
+from src.onelogin import onelogin_response
 
 from slack_bolt import App
 from dotenv import load_dotenv
@@ -62,6 +63,10 @@ def handle_invite_deny_button(ack, body):
     """listener for invite deny button"""
     invite_deny_actions(ack,body)
 
+@app.message("onelogin")
+def handle_onelogin(ack, body, say):
+    """listener for onelogin"""
+    onelogin_response(ack,body,say)
 
 @app.event("message")
 def handle_message_events():
