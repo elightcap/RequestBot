@@ -63,15 +63,22 @@ def handle_invite_deny_button(ack, body):
     """listener for invite deny button"""
     invite_deny_actions(ack,body)
 
-@app.message("onelogin")
-def handle_onelogin(ack, body, say):
-    """listener for onelogin"""
-    onelogin_response(ack,body,say)
-
 @app.event("message")
-def handle_message_events():
-    """listener for message events"""
-    return
+def handle_onelogin(message,say):
+    """listener for onelogin"""
+    body = message['blocks'][0]['elements'][0]['elements'][0]['text']
+    match = re.compile(r"onelogin",re.IGNORECASE)
+    if match in body:
+        onelogin_response(message,say)
+    elif "duty" in body:
+        say("fuck duty")
+    else:
+        return
+
+#@app.event("message")
+#def handle_message_events():
+#    """listener for message events"""
+#    return
 
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
