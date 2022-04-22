@@ -67,7 +67,7 @@ def handle_invite_deny_button(ack, body):
 def handle_onelogin(message,say):
     """listener for onelogin"""
     body = message['blocks'][0]['elements'][0]['elements'][0]['text']
-    if re.match(r"onelogin | one login",body, re.IGNORECASE):
+    if re.match(r"(onelogin | one login)",body, re.IGNORECASE):
         onelogin_response(message,say)
     elif "duty" in body:
         say("fuck duty")
