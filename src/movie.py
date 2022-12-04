@@ -100,8 +100,8 @@ def movie_button_actions(ack,body):
             ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
             print(f"{movie_name} requested")
             app.client.chat_postMessage(
-            channel=body['user']['id'],
-            text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
+                channel=body['user']['id'],
+                text=f"Requesting <{ombi_movie_link}|{movie_name}>! Feel free to monitor <#CR3C99R7V> for notifications!"
     )
     except HTTPError as err:
         print(err)
