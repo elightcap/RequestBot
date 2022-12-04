@@ -73,6 +73,7 @@ def movie_req(ack,body):
 def movie_button_actions(ack,body):
     """movie button actions function.  Sends movie request to Ombi based on button value."""
     ack()
+    username = body['user']['username']
     response_url = body['response_url']
     movie_id = int(body['actions'][0]['value'])
     movie_name = body['actions'][0]['text']['text']
@@ -80,7 +81,6 @@ def movie_button_actions(ack,body):
         "theMovieDbId": movie_id, "is4kRequest": False
     }
     ombi_json = json.dumps(ombi_body)
-    type(ombi_json)
     try:
         get_url = OMBI_SEARCH_URL + f"/{movie_id}"
         get_req = requests.get(get_url, headers=OMBI_HEADERS)
@@ -97,6 +97,9 @@ def movie_button_actions(ack,body):
             )
         else:
             dl = requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_body)
+            print(dl.json())
+            OMBI_HEADERS["ApiAlias"] = username
+            print(OMBI_HEADERS)
             ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
             print(f"{movie_name} requested")
             app.client.chat_postMessage(
