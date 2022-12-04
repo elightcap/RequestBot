@@ -74,10 +74,13 @@ def movie_button_actions(ack,body):
     """movie button actions function.  Sends movie request to Ombi based on button value."""
     ack()
     response_url = body['response_url']
-    movie_id = body['actions'][0]['value']
+    movie_id = int(body['actions'][0]['value'])
     movie_name = body['actions'][0]['text']['text']
-    ombi_body = {"theMovieDbId": movie_id, "languageCode": "EN", "is4kRequest": False}
+    ombi_body = {
+        "theMovieDbId": movie_id, "is4kRequest": False
+    }
     ombi_json = json.dumps(ombi_body)
+    type(ombi_json)
     try:
         get_url = OMBI_SEARCH_URL + f"/{movie_id}"
         get_req = requests.get(get_url, headers=OMBI_HEADERS)
@@ -93,8 +96,9 @@ def movie_button_actions(ack,body):
                 text=f"{movie_name} is already requested!"
             )
         else:
-            requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_json)
+            dl = requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_body)
             ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
+            print(f"{movie_name} requested")
             app.client.chat_postMessage(
             channel=body['user']['id'],
             text=f"Requesting <{ombi_movie_link}|{movie_name}>!"
@@ -106,6 +110,8 @@ def movie_button_actions(ack,body):
             text="There was an error with your request.  Please try again."
         )
         return
+    except Exception as e:
+        print(e)
     del_body = {"delete_original": "true"}
     body_json = json.dumps(del_body)
     try:

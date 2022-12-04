@@ -75,6 +75,7 @@ def tv_button_actions(ack,body):
     ack()
     response_url = body['response_url']
     tv_id = body['actions'][0]['value']
+    print(tv_id)
     tv_name = body['actions'][0]['text']['text']
     ombi_body = {
         "theMovieDbId": tv_id, "requestAll": True, "latestSeason": True, "firstSeason": True
