@@ -15,7 +15,8 @@ def hello_world():
 
 @app.route('/post', methods=["POST"])
 def testpost():
-    input_json = request.get_json(force=True) 
+    input_json = request.get_json(force=True)
+    print(input_json)
     dictToReturn = {'text':input_json['text']}
     print(dictToReturn)
     return jsonify(dictToReturn)
