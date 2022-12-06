@@ -12,4 +12,5 @@ app = Flask(__name__)
 def testpost():
     input_json = request.get_json(force=True) 
     dictToReturn = {'text':input_json['text']}
+    print(dictToReturn)
     return jsonify(dictToReturn)
