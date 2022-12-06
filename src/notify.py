@@ -15,6 +15,6 @@ app = App(
 
 def send_slack_notification(alias,name):
     app.client.chat_postMessage(
-        name,
-        text=f"Your request for {alias} has been completed!"
+            channel=alias,
+            text="added {}".format(name)
     )
