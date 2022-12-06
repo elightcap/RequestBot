@@ -10,4 +10,5 @@ app = Flask(__name__)
 
 @app.route('/notify')
 def hello_world():
+    print("call")
     return 'This is my first API call!'
