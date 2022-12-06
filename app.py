@@ -1,12 +1,16 @@
 import os
 import re
 import requests
+import json
 
 from src.notify import send_slack_notification
 from urllib.error import HTTPError
 from flask import Flask,jsonify,request
+from dotenv import load_dotenv
 
-OMBI_API_KEY = "something here"
+load_dotenv()
+
+OMBI_API_KEY = os.getenv('OMBI_API_KEY')
 OMBI_HEADERS = {"ApiKey": OMBI_API_KEY, "Content-Type": "application/json"}
 
 JELLYFIN_API_KEY = os.getenv('JELLYFIN_API_KEY')
