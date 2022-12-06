@@ -42,6 +42,6 @@ def notify_slack():
         print(alias)
         print(name)
         send_slack_notification(alias,name)
-        return 200
+        return "200"
     except Exception as e:
-        return 500
+        return "500"
