@@ -30,13 +30,18 @@ def hello_world():
 
 @app.route('/notify', methods=["POST"])
 def notify_slack():
-    input_json = request.get_json(force=True)
-    print(input_json)
-    requestId = input_json['requestId']
-    getUrl = "https://ombi.elightcap.com/api/v1/Request/movie/info/{}".format(requestId)
-    getRequest = requests.get(getUrl,headers=OMBI_HEADERS)
-    getRequestJson = getRequest.json()
-    alias = getRequestJson["requestedByAlias"]
-    name = getRequestJson["title"]
-    send_slack_notification(alias,name)
-    return 200
+    try:
+        input_json = request.get_json(force=True)
+        print(input_json)
+        requestId = input_json['requestId']
+        getUrl = "https://ombi.elightcap.com/api/v1/Request/movie/info/{}".format(requestId)
+        getRequest = requests.get(getUrl,headers=OMBI_HEADERS)
+        getRequestJson = getRequest.json()
+        alias = getRequestJson["requestedByAlias"]
+        name = getRequestJson["title"]
+        print(alias)
+        print(name)
+        send_slack_notification(alias,name)
+        return 200
+    except Exception as e:
+        return 500
