@@ -16,5 +16,5 @@ app = App(
 def send_slack_notification(alias,name):
     app.client.chat_postMessage(
             channel=alias,
-            text="added {}".format(name)
+            text="Your request for {} is ready to watch!".format(name)
     )
