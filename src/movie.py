@@ -96,9 +96,9 @@ def movie_button_actions(ack,body):
                 text=f"{movie_name} is already requested!"
             )
         else:
+            OMBI_HEADERS["ApiAlias"] = username
             dl = requests.post(OMBI_MOVIE_URL, headers=OMBI_HEADERS, json=ombi_body)
             print(dl.json())
-            OMBI_HEADERS["ApiAlias"] = username
             print(OMBI_HEADERS)
             ombi_movie_link = OMBI_BASE_URL + "/details/movie/" + str(movie_id)
             print(f"{movie_name} requested")
