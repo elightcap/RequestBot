@@ -72,7 +72,7 @@ def movie_req(ack,body):
 def movie_button_actions(ack,body):
     """movie button actions function.  Sends movie request to Ombi based on button value."""
     ack()
-    username = body['user']['username']
+    username = body['user']['user_id']
     response_url = body['response_url']
     movie_id = int(body['actions'][0]['value'])
     movie_name = body['actions'][0]['text']['text']
