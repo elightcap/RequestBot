@@ -1,6 +1,10 @@
 import os
 import re
 
+from urllib.error import HTTPError
+from flask import Flask,jsonify,request
+import requests
+
 from src.helper import helperfunc,helper_button_actions
 from src.tv import tv_req,tv_button_actions
 from src.movie import movie_req,movie_button_actions
@@ -16,6 +20,8 @@ app = App(
     token = os.getenv('SLACK_BOT_TOKEN'),
     signing_secret = os.getenv('SLACK_SIGNING_SECRET')
 )
+
+flaskapp = Flask(__name__)
 
 @app.command("/help")
 def req_help(ack,body):
@@ -72,6 +78,10 @@ def handle_onelogin(ack, body, say):
 def handle_message_events():
     """listener for message events"""
     return
+
+@flaskapp.route('/notify',methods=['POST'])
+def send_slack_notification(body):
+    return body
 
 if __name__ == "__main__":
     app.start(port=int(os.environ.get("PORT", 3001)))
