@@ -32,36 +32,35 @@ def movie_req(ack,body):
         db_req_url = MOVIE_URL + movie_url_encode
         db_req = requests.get(db_req_url, headers=MOVIE_DB_HEADERS)
         db_req_json = json.loads(db_req.text)
-        if len(db_req_json['results']) > 1:
-            count = len(db_req_json['results'])
-            blocks = [{
-                "type": "actions",
-                "block_id": "movie_request_actions",
-                "elements": []
-            }]
-            for i in range(count):
-                i_id = str(db_req_json['results'][i]['id']).strip()
-                if len(db_req_json['results'][i]['title']) < 76:
-                    blocks[0]['elements'].append({
-                        "type":"button",
-                        "action_id": "movie_request_button"+str(i),
-                        "text": {
-                            "type": "plain_text",
-                            "text": db_req_json['results'][i]['title'],
-                            "emoji": True
-                        },
-                        "value": i_id
-                    })
-            app.client.chat_postMessage(
-                channel=body['user_id'],
-                text="Please Select a Movie:"
-                )
-            app.client.chat_postMessage(
-                channel=body['user_id'],
-                blocks=blocks,
-                text="Select a Movie to request!"
+        count = len(db_req_json['results'])
+        blocks = [{
+            "type": "actions",
+            "block_id": "movie_request_actions",
+            "elements": []
+        }]
+        for i in range(count):
+            i_id = str(db_req_json['results'][i]['id']).strip()
+            if len(db_req_json['results'][i]['title']) < 76:
+                blocks[0]['elements'].append({
+                    "type":"button",
+                    "action_id": "movie_request_button"+str(i),
+                    "text": {
+                        "type": "plain_text",
+                        "text": db_req_json['results'][i]['title'],
+                        "emoji": True
+                    },
+                    "value": i_id
+                })
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="Please Select a Movie:"
             )
-            return
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            blocks=blocks,
+            text="Select a Movie to request!"
+        )
+        return
     except KeyError as err:
         print(err)
         app.client.chat_postMessage(
