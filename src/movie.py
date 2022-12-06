@@ -78,7 +78,7 @@ def movie_button_actions(ack,body):
     movie_id = int(body['actions'][0]['value'])
     movie_name = body['actions'][0]['text']['text']
     ombi_body = {
-        "theMovieDbId": movie_id, "is4kRequest": False
+        "theMovieDbId": movie_id, "is4kRequest": False, "ApiAlias": username
     }
     ombi_json = json.dumps(ombi_body)
     try:
