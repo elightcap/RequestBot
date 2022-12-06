@@ -8,6 +8,11 @@ import requests
 app = Flask(__name__)
 
 
+
+@app.route("/")
+def hello_world():
+    return "Hello, World!"
+
 @app.route('/post', methods=["POST"])
 def testpost():
     input_json = request.get_json(force=True) 
