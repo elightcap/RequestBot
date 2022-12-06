@@ -35,7 +35,7 @@ def notify_slack():
     requestId = input_json['requestId']
     getUrl = "https://ombi.elightcap.com/api/v1/Request/movie/info/{}".format(requestId)
     getRequest = requests.get(getUrl,headers=OMBI_HEADERS)
-    alias = getRequest.json()["requestedByAlias"]
-    name = getRequest.json()["title"]
+    alias = getRequest["requestedByAlias"]
+    name = getRequest["title"]
     send_slack_notification(alias,name)
     return 200
