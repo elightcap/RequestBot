@@ -1,0 +1,5 @@
+pyparsing==2.4.7
+python-dotenv==0.20.0
+requests==2.26.0
+slack_bolt==1.13.0
+flask

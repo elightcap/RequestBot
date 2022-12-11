@@ -17,7 +17,6 @@ app = App(
     signing_secret = os.getenv('SLACK_SIGNING_SECRET')
 )
 
-flaskapp = Flask(__name__)
 
 @app.command("/help")
 def req_help(ack,body):

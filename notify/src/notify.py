@@ -1,0 +1,18 @@
+import os
+import json
+import requests
+
+from dotenv import load_dotenv
+from slack_bolt import App
+
+load_dotenv()
+app = App(
+    token = os.getenv('SLACK_BOT_TOKEN'),
+    signing_secret = os.getenv('SLACK_SIGNING_SECRET')
+)
+
+def send_slack_notification(alias,name):
+    app.client.chat_postMessage(
+            channel=alias,
+            text="Your request for {} is ready to watch!".format(name)
+    )
