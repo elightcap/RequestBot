@@ -4,7 +4,6 @@
 
 ### Requirements
 
-* Python3
 * [Slack](https://slack.com/)
 * [Ombi](https://ombi.io)
 * [Ombi API](https://ombi.io/api)
@@ -13,15 +12,31 @@
 * Port 3001 from the internet forwarded to the device running the bot or a reverse proxy
 * (Optional) [Jellyfin](https://jellyfin.org)
 * (Optional) [Jellyfin API Key](https://jellyfin.org/docs/api/authentication)
+* (Optional) [Docker](https://docs.docker.com/get-docker/)
 
 ### Installation
 
+#### Docker
+
+Docker is the recommended method of installation
+
 * [Create a Slack app](https://api.slack.com/start)
 * Clone this repository `git clone https://github.com/elightcap/RequestBot.git`
-* Copy the env example `cp ./src/env.sample ./src/.env`
-* Change values in .env `nano .env`
-* Install requirements `pip install -r requirements.txt`
-* Run bot `python3 ./src/main.py`
+* Add the required values to the sample.env file `cd Requestbot && nano sample.env`
+* Run the following to put the .env in the right places: `cp sample.env ./notify/.env && cp sample.env ./slackbot/.env`
+* Build the images `docker compose build`
+* Start the containers `docker compose up -d`
+
+#### Run with Python
+
+If you dont want to use docker, the bots can be run natively with python3. Recommend a terminal multiplexer like [tmux](https://github.com/tmux/tmux/wiki)
+
+* [Create a Slack app](https://api.slack.com/start)
+* Clone this repository `git clone https://github.com/elightcap/RequestBot.git`
+* Add the required values to the sample.env file `cd Requestbot && nano sample.env`
+* Run the following to put the .env in the right places: `cp sample.env ./notify/.env && cp sample.env ./slackbot/.env`
+* Install requirements `cd ./notify && pip install -r requirements.txt`
+* Run bots `python3 ./slackbot/main.py` `python3 ./notify/main.py` (this is where tmux comes in handy)
 
 ### Interacting with the bot
 

@@ -3,13 +3,13 @@ version: "3.7"
 services:
   ombinotify:
     container_name: ombinotify
-    image: ombipynotify:latest
+    build: ./notify/
     restart: unless-stopped
     ports:
         - 5000:5000
   requestbot:
     container_name: requestbot
-    image: requestbot:latest
+    build: ./slackbot/
     restart: unless-stopped
     ports:
       - 3001:3001
