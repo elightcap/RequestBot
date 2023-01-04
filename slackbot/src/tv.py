@@ -32,36 +32,35 @@ def tv_req(ack,body):
         db_req_url = TV_URL + tv_url_encode
         db_req = requests.get(db_req_url, headers=MOVIE_DB_HEADERS)
         db_req_json = json.loads(db_req.text)
-        if len(db_req_json['results']) > 1:
-            count = len(db_req_json['results'])
-            blocks = [{
-                "type": "actions",
-                "block_id": "tv_request_actions",
-                "elements": []
-            }]
-            for i in range(count):
-                i_id = str(db_req_json['results'][i]['id']).strip()
-                if len(db_req_json['results'][i]['name']) < 76:
-                    blocks[0]['elements'].append({
-                        "type":"button",
-                        "action_id": "tv_request_button"+str(i),
-                        "text": {
-                            "type": "plain_text",
-                            "text": db_req_json['results'][i]['name'],
-                            "emoji": True
-                        },
-                        "value": i_id
-                    })
-            app.client.chat_postMessage(
-                channel=body['user_id'],
-                text="Please Select a Show:"
-                )
-            app.client.chat_postMessage(
-                channel=body['user_id'],
-                blocks=blocks,
-                text="Select a TV show to request!"
+        count = len(db_req_json['results'])
+        blocks = [{
+            "type": "actions",
+            "block_id": "tv_request_actions",
+            "elements": []
+        }]
+        for i in range(count):
+            i_id = str(db_req_json['results'][i]['id']).strip()
+            if len(db_req_json['results'][i]['name']) < 76:
+                blocks[0]['elements'].append({
+                    "type":"button",
+                    "action_id": "tv_request_button"+str(i),
+                    "text": {
+                        "type": "plain_text",
+                        "text": db_req_json['results'][i]['name'],
+                        "emoji": True
+                    },
+                    "value": i_id
+                })
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            text="Please Select a Show:"
             )
-            return
+        app.client.chat_postMessage(
+            channel=body['user_id'],
+            blocks=blocks,
+            text="Select a TV show to request!"
+        )
+        return
     except KeyError as err:
         print(err)
         app.client.chat_postMessage(
